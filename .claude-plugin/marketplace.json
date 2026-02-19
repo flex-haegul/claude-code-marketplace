@@ -1,0 +1,12 @@
+{
+  "name": "flex-haegul-plugins",
+  "owner": {
+    "name": "flex-haegul"
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugin marketplace by flex-haegul",
+    "version": "2026.02",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": []
+}
