@@ -1,5 +1,5 @@
 {
   "name": "git",
-  "description": "git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지와 GitHub PR을 자동 생성",
+  "description": "git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지, GitHub PR 자동 생성, stacked PR rebase 정리",
   "version": "2026.02"
 }
