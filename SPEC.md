@@ -18,7 +18,7 @@ Claude Code 플러그인 마켓플레이스를 위한 정적 GitHub 저장소.
 | 소스 관리 | 모노레포 (모든 플러그인을 이 저장소에 포함) | 단일 저장소에서 일관된 관리 |
 | 디렉터리 구조 | 플러그인별 분리 (plugins/플러그인/) | 단순하고 직관적인 구조 |
 | pluginRoot | `./plugins` 설정 | source 경로 단순화 |
-| 버전 관리 | 날짜 기반 (YYYY.MM 형식) | 개인 프로젝트에 적합한 직관적 버전 체계 |
+| 버전 관리 | 날짜 기반 (YYYY.MM[.patch] 형식) | 개인 프로젝트에 적합한 직관적 버전 체계 |
 | 템플릿 | 포함하지 않음 | 필요 시 Claude Code가 도와줄 수 있으므로 |
 | 자동화 스크립트 | 포함하지 않음 | 수동 관리 + Claude Code 활용 |
 | 타겟 사용자 | 개인 → 점진적 공유 | 멀티 환경에서 동일 플러그인 세트 사용 |
@@ -89,8 +89,17 @@ claude-code-marketplace/
 | `name` | O | 플러그인 식별자 (kebab-case) |
 | `source` | O | 플러그인 디렉터리 경로 (`./plugins/<name>` 형식) |
 | `description` | O | 플러그인 설명 |
-| `version` | O | 날짜 기반 버전 (YYYY.MM) |
+| `version` | O | 날짜 기반 버전 (YYYY.MM[.patch]) |
 | `keywords` | X | 검색용 키워드 배열 |
+
+## 버전 관리 규칙
+
+- 형식: `YYYY.MM` (월 첫 릴리스) 또는 `YYYY.MM.patch` (같은 월 추가 변경)
+- 플러그인에 변경이 있으면 반드시 해당 플러그인의 version을 올린다.
+  - `plugins/<name>/.claude-plugin/plugin.json`의 `version`
+  - `.claude-plugin/marketplace.json`의 해당 플러그인 `version`
+- 두 곳의 version은 항상 동일하게 유지한다.
+- 마켓플레이스 metadata의 version은 전체 카탈로그 변경 시에만 올린다.
 
 ## 제약사항 및 주의사항
 

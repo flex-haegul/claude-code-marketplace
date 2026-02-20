@@ -35,8 +35,9 @@ See [SPEC.md](SPEC.md) for directory structure and design decisions.
 2. Add `.claude-plugin/plugin.json` manifest
 3. Add plugin source files (commands/, hooks/, agents/, etc.)
 4. Add entry to `.claude-plugin/marketplace.json` `plugins` array
-5. Validate with `claude plugin validate .` or `/plugin validate .`
-6. Commit and push
+5. Bump `version` in both `plugin.json` and `marketplace.json` (see [SPEC.md](SPEC.md#버전-관리-규칙))
+6. Validate with `claude plugin validate .` or `/plugin validate .`
+7. Commit and push
 
 ## License
 
