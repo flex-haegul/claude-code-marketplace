@@ -16,11 +16,9 @@ Claude Code 플러그인 마켓플레이스를 위한 정적 GitHub 저장소.
 |------|------|------|
 | 프로젝트 형태 | 정적 저장소 (marketplace.json + 플러그인 파일) | 개인 용도에 적합한 최소한의 구조 |
 | 소스 관리 | 모노레포 (모든 플러그인을 이 저장소에 포함) | 단일 저장소에서 일관된 관리 |
-| 디렉터리 구조 | 카테고리별 분리 (plugins/카테고리/플러그인/) | 플러그인이 늘어날 때 체계적 관리 가능 |
+| 디렉터리 구조 | 플러그인별 분리 (plugins/플러그인/) | 단순하고 직관적인 구조 |
 | pluginRoot | `./plugins` 설정 | source 경로 단순화 |
 | 버전 관리 | 날짜 기반 (YYYY.MM 형식) | 개인 프로젝트에 적합한 직관적 버전 체계 |
-| 초기 플러그인 | 없음 (별도 추가 예정) | 빈 구조만 스캐폴딩 |
-| 초기 카테고리 | 최소한 (plugins/ 디렉터리만, 카테고리는 플러그인 추가 시 생성) | 불필요한 빈 디렉터리 방지 |
 | 템플릿 | 포함하지 않음 | 필요 시 Claude Code가 도와줄 수 있으므로 |
 | 자동화 스크립트 | 포함하지 않음 | 수동 관리 + Claude Code 활용 |
 | 타겟 사용자 | 개인 → 점진적 공유 | 멀티 환경에서 동일 플러그인 세트 사용 |
@@ -32,28 +30,23 @@ claude-code-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json        # 마켓플레이스 카탈로그 (핵심 파일)
 ├── plugins/                    # 모든 플러그인의 루트 디렉터리
-│   └── (카테고리별 디렉터리는 플러그인 추가 시 생성)
-│       └── (플러그인 디렉터리)
-│           ├── .claude-plugin/
-│           │   └── plugin.json # 플러그인 매니페스트
-│           └── (플러그인 소스 파일들)
+│   ├── git/                    # Git 워크플로우 자동화 플러그인
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── commands/
+│   │       ├── git-commit.md
+│   │       ├── github-pr.md
+│   │       └── git-rebase-stack.md
+│   └── plan/                   # 프로젝트 기획 플러그인
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       └── commands/
+│           ├── deep-interview.md
+│           └── fill-linear-ticket.md
 ├── LICENSE                     # MIT 라이선스
 ├── README.md                   # 프로젝트 설명 및 사용법
 └── SPEC.md                     # 이 스펙 문서
 ```
-
-### 카테고리 디렉터리 컨벤션 (추후 사용)
-
-플러그인 추가 시 아래 카테고리 중 선택하여 디렉터리 생성:
-
-| 카테고리 | 디렉터리명 | 설명 |
-|----------|-----------|------|
-| 코드 품질 | `code-quality` | 코드 리뷰, 린팅, 포매팅, 보안 검사 |
-| 개발 워크플로우 | `workflow` | Git 자동화, CI/CD, 배포, 프로젝트 관리 |
-| AI 도구 | `ai-tools` | 커스텀 프롬프트, AI 에이전트, 특수 목적 스킬 |
-| DevOps | `devops` | 인프라, 모니터링, 컨테이너 관련 |
-| 보안 | `security` | 보안 스캐닝, 취약점 분석, 컴플라이언스 |
-| 데이터 | `data` | 데이터 처리, 분석, 시각화 |
 
 ## marketplace.json 스키마
 
@@ -68,24 +61,55 @@ claude-code-marketplace/
     "version": "2026.02",
     "pluginRoot": "./plugins"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "git",
+      "source": "./plugins/git",
+      "description": "git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지, GitHub PR 자동 생성, stacked PR rebase 정리",
+      "version": "2026.02",
+      "keywords": ["git", "commit", "pull-request", "conventional-commit", "korean", "rebase", "stacked-pr"]
+    },
+    {
+      "name": "plan",
+      "source": "./plugins/plan",
+      "description": "심층 인터뷰를 통해 프로젝트 스펙 문서를 자동 생성하고 Linear 티켓 정보를 채워줌",
+      "version": "2026.02",
+      "keywords": ["interview", "spec", "linear", "requirements", "planning"]
+    }
+  ]
 }
 ```
 
-### 플러그인 추가 시 항목 예시
+### 플러그인 항목 필드
 
-```json
-{
-  "name": "example-plugin",
-  "source": "code-quality/example-plugin",
-  "description": "플러그인 설명",
-  "version": "2026.02",
-  "category": "code-quality",
-  "keywords": ["example"]
-}
-```
+| 필드 | 필수 | 설명 |
+|------|------|------|
+| `name` | O | 플러그인 식별자 (kebab-case) |
+| `source` | O | 플러그인 디렉터리 경로 (`./plugins/<name>` 형식) |
+| `description` | O | 플러그인 설명 |
+| `version` | O | 날짜 기반 버전 (YYYY.MM) |
+| `keywords` | X | 검색용 키워드 배열 |
 
-> **참고**: `pluginRoot`가 `./plugins`로 설정되어 있으므로, source에서 `./plugins/` 접두사를 생략한다.
+## 플러그인 목록
+
+### git
+
+git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지, GitHub PR 자동 생성, stacked PR rebase 정리.
+
+| 커맨드 | 설명 |
+|--------|------|
+| `git-commit` | git diff 분석 → conventional commit 형식 한국어 커밋 메시지 자동 생성 및 커밋 실행. 커밋 분할 판단, BREAKING CHANGE 감지 포함. |
+| `github-pr` | 현재 브랜치 변경사항 분석 → conventional commit 형식 한국어 제목으로 GitHub PR 자동 생성. `--draft` 지원, PR 템플릿 탐색, issue 번호 자동 추출. |
+| `git-rebase-stack` | stacked PR의 `git rebase --onto --update-refs` 기반 자동 정리. 자연어 인자, 스택 topology 분석, conflict 처리, 선택적 push. |
+
+### plan
+
+심층 인터뷰를 통해 프로젝트 스펙 문서를 자동 생성하고 Linear 티켓 정보를 채워줌.
+
+| 커맨드 | 설명 |
+|--------|------|
+| `deep-interview` | AskUserQuestion을 활용한 심층 인터뷰(기술 구현, UI/UX, tradeoffs 등) 후 스펙 문서 자동 생성. |
+| `fill-linear-ticket` | Linear 티켓 URL을 받아 title/description/comments/linked issue를 분석하고, 인터뷰를 통해 누락 정보를 채움. |
 
 ## 사용법
 
@@ -111,9 +135,9 @@ claude-code-marketplace/
 
 새 플러그인을 추가할 때의 단계:
 
-1. `plugins/<카테고리>/<플러그인명>/` 디렉터리 생성
+1. `plugins/<플러그인명>/` 디렉터리 생성
 2. `.claude-plugin/plugin.json` 매니페스트 작성
-3. 플러그인 소스 파일 추가 (skills/, hooks/, agents/ 등)
+3. 플러그인 소스 파일 추가 (commands/, hooks/, agents/ 등)
 4. 루트 `.claude-plugin/marketplace.json`의 `plugins` 배열에 항목 추가
 5. `claude plugin validate .` 또는 `/plugin validate .`로 검증
 6. 커밋 및 푸시
