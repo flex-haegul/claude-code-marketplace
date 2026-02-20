@@ -82,10 +82,10 @@ diff를 분석하여 논리적으로 분리되어야 하는 변경사항이 있�
 - BREAKING CHANGE가 있다고 판단되면 footer에 포함한다.
 - BREAKING CHANGE 판단은 diff 내용을 종합적으로 분석하여 결정한다.
   - 공개 API 시그니처 변경, 함수/메서드 제거, 필수 파라미터 추가, 반환 타입 변경, export 제거 등을 고려한다.
-- BREAKING CHANGE가 있으면 type 뒤에 `!`를 붙이고 footer에 상세 내용을 기술한다.
+- BREAKING CHANGE가 있으면 footer에 상세 내용을 기술한다.
 - 예:
   ```
-  feat(api)!: 사용자 인증 API 응답 형식 변경
+  feat(api): 사용자 인증 API 응답 형식 변경
 
   - 기존 flat 구조에서 nested 구조로 응답 형식 변경
   - access_token 필드명을 accessToken으로 변경
