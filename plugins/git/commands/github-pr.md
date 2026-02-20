@@ -18,8 +18,10 @@
 1. `git status`로 현재 상태를 확인한다.
 2. 현재 브랜치가 기본 브랜치(main/master)인 경우 에러로 중단한다.
 3. **커밋되지 않은 변경사항이 있으면** 사용자에게 경고 메시지를 출력하되, 계속 진행한다.
-4. `git log @{upstream}..HEAD --oneline`로 리모트에 푸시되지 않은 로컬 커밋이 있는지 확인한다.
-   - 푸시되지 않은 커밋이 있으면 **에러로 중단**하고, 먼저 `git push`를 실행하도록 안내한다.
+4. 리모트에 현재 브랜치가 푸시되어 있는지 확인한다.
+   - `git ls-remote --heads origin <현재 브랜치명>`으로 리모트 브랜치 존재 여부를 확인한다.
+   - 리모트 브랜치가 없거나, `git log @{upstream}..HEAD --oneline`으로 푸시되지 않은 로컬 커밋이 있으면 `git push -u origin <현재 브랜치명>`을 실행하여 자동으로 푸시한다.
+   - 푸시 실패 시 에러 메시지를 출력하고 중단한다.
 5. GitHub MCP `list_pull_requests` 도구로 현재 브랜치에서 이미 열린 PR이 있는지 확인한다.
    - 열린 PR이 있으면 **경고 메시지와 기존 PR URL을 출력**하고, 사용자에게 계속 진행할지 AskUserQuestion으로 확인한다.
 
@@ -103,4 +105,3 @@
 - breaking change '!' 표시는 자동 추가하지 않는다.
 - reviewer, label 자동 지정은 하지 않는다.
 - PR 생성 전 사용자 확인(preview)은 하지 않는다.
-- 자동 push는 하지 않는다.
