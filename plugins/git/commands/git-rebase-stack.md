@@ -36,8 +36,10 @@ git rebase --onto develop step-1 --update-refs
 
 1. `$ARGUMENTS`에 base branch가 명시되어 있으면 해당 브랜치를 사용한다.
 2. 명시되지 않았으면 자동 감지한다:
-   - GitHub MCP `get_file_contents` 또는 `git remote show origin`으로 레포의 기본 브랜치를 확인한다.
-   - 감지 실패 시 `main` → `develop` → `master` 순서로 폴백한다.
+   - `gh api repos/{owner}/{repo} --jq .default_branch`로 레포의 기본 브랜치를 확인한다.
+     - `{owner}`와 `{repo}`는 `git remote get-url origin`의 출력에서 추출한다.
+   - 감지 실패 시 `git remote show origin`의 `HEAD branch` 출력으로 폴백한다.
+   - 모두 실패 시 `main` → `develop` → `master` 순서로 폴백한다.
 3. base branch를 `git fetch origin <base>`로 최신 상태로 업데이트한다.
 
 ### 3단계: 스택 구조 분석

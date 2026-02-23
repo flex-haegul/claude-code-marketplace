@@ -27,8 +27,10 @@
 
 ### 2단계: 기본 브랜치 감지
 
-1. GitHub MCP `get_file_contents` 또는 로컬 `git remote show origin`으로 레포의 기본 브랜치를 확인한다.
-2. 감지 실패 시 `main` → `master` 순서로 폴백한다.
+1. `gh api repos/{owner}/{repo} --jq .default_branch`로 레포의 기본 브랜치를 확인한다.
+   - `{owner}`와 `{repo}`는 `git remote get-url origin`의 출력에서 추출한다.
+2. 감지 실패 시 `git remote show origin`의 `HEAD branch` 출력으로 폴백한다.
+3. 모두 실패 시 `main` → `master` 순서로 폴백한다.
 
 ### 3단계: 변경사항 분석
 
