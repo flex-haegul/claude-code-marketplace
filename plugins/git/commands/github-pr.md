@@ -7,8 +7,9 @@
 - `$ARGUMENTS`: 선택적. `--draft` 플래그를 전달하면 draft PR로 생성한다.
 
 ## 도구 우선순위
-- GitHub 관련 작업(PR 조회, PR 생성, 레포 정보 조회 등)은 **GitHub MCP 도구를 우선 사용**한다.
+- GitHub 관련 작업(PR 조회, 레포 정보 조회 등)은 **GitHub MCP 도구를 우선 사용**한다.
 - MCP 도구가 실패하거나 사용 불가능한 경우에만 `gh` CLI로 폴백한다.
+- **예외: PR 생성**은 `gh pr create` CLI를 우선 사용한다. (MCP 도구는 멀티라인 body에서 줄바꿈이 리터럴 `\n`으로 깨지는 문제가 있다.)
 - git 로컬 명령어(`git status`, `git log`, `git diff` 등)는 Bash로 실행한다.
 
 ## 실행 절차
@@ -94,13 +95,22 @@
 
 ### 6단계: PR 생성
 
-1. GitHub MCP `create_pull_request` 도구로 PR을 생성한다.
-   - `title`: 4단계에서 생성한 conventional commit 형식 제목
-   - `body`: 5단계에서 생성한 body
-   - `base`: 2단계에서 감지한 기본 브랜치
-   - `head`: 현재 브랜치명
-   - `$ARGUMENTS`에 `--draft`가 포함되어 있으면 `draft: true`로 설정한다.
-   - MCP 도구 실패 시 `gh pr create` CLI로 폴백한다.
+1. `gh pr create` CLI로 PR을 생성한다.
+   - body는 반드시 HEREDOC(`<<'EOF'`)을 사용하여 전달한다. (MCP 도구는 멀티라인 body에서 줄바꿈이 리터럴 `\n`으로 깨지는 문제가 있으므로 사용하지 않는다.)
+   - 예시:
+     ```
+     gh pr create --title "제목" --body "$(cat <<'EOF'
+     ## Summary
+     내용...
+
+     ## Changes
+     - 변경1
+     EOF
+     )"
+     ```
+   - `--base`: 2단계에서 감지한 기본 브랜치
+   - `--head`: 현재 브랜치명
+   - `$ARGUMENTS`에 `--draft`가 포함되어 있으면 `--draft` 플래그를 추가한다.
 2. 생성된 PR URL을 사용자에게 출력한다.
 
 ## 제외 사항
